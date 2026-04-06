@@ -126,14 +126,27 @@ const AdminDashboard = () => {
     setInventory(normalizedInventory);
   };
 
-  const refreshAdminData = async () => {
-    const [unreadRes] = await Promise.all([
-      notificationsAPI.getUnreadCount(),
-      fetchBookings(),
-      fetchTickets(),
-      fetchEvents(),
-      fetchInventory()
-    ]);
+  const refreshActiveTabData = async () => {
+    const unreadPromise = notificationsAPI.getUnreadCount();
+
+    switch (activeTab) {
+      case "bookings":
+        await fetchBookings();
+        break;
+      case "tickets":
+        await fetchTickets();
+        break;
+      case "events":
+        await fetchEvents();
+        break;
+      case "inventory":
+        await fetchInventory();
+        break;
+      default:
+        break;
+    }
+
+    const unreadRes = await unreadPromise;
     setAdminUnread(unreadRes.unreadCount || 0);
   };
 
@@ -141,16 +154,17 @@ const AdminDashboard = () => {
     const isLoggedIn = localStorage.getItem("admin_logged_in") || sessionStorage.getItem("admin_logged_in");
     if (isLoggedIn !== "true") { navigate("/admin/login"); return; }
     const refresh = async () => {
+      if (document.hidden) return;
       try {
-        await refreshAdminData();
+        await refreshActiveTabData();
       } catch (error) {
         console.error("Failed to fetch admin data:", error);
       }
     };
     refresh();
-    const interval = setInterval(refresh, 3000);
+    const interval = setInterval(refresh, 15000);
     return () => clearInterval(interval);
-  }, [navigate]);
+  }, [navigate, activeTab]);
 
   const handleLogout = () => {
     localStorage.removeItem("admin_logged_in");
