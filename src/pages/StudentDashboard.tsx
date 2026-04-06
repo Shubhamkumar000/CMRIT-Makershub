@@ -36,6 +36,7 @@ const StudentDashboard = () => {
     }
 
     const refresh = async () => {
+      if (document.hidden) return;
       try {
         const [ticketsRes, unreadRes] = await Promise.all([
           ticketsAPI.getMyTickets(),
@@ -59,7 +60,7 @@ const StudentDashboard = () => {
     };
 
     refresh();
-    const interval = setInterval(refresh, 3000);
+    const interval = setInterval(refresh, 15000);
     return () => clearInterval(interval);
   }, [isLoading, user, navigate]);
 

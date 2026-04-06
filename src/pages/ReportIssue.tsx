@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,15 +20,25 @@ const ReportIssue = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [equipment, setEquipment] = useState(searchParams.get("equipment") || "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!user) { navigate("/student/login"); return null; }
+  useEffect(() => {
+    if (!user) {
+      navigate("/student/login");
+    }
+  }, [user, navigate]);
+
+  if (!user) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!title.trim() || !description.trim() || !equipment) {
       toast({ title: "Please fill all fields", variant: "destructive" });
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       await ticketsAPI.create({
@@ -43,6 +53,8 @@ const ReportIssue = () => {
         title: error instanceof Error ? error.message : "Failed to submit ticket",
         variant: "destructive"
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -73,7 +85,7 @@ const ReportIssue = () => {
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Description</label>
                 <Textarea placeholder="Describe the issue in detail..." rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
-              <Button type="submit" className="w-full gap-2"><Send size={16} /> Submit Ticket</Button>
+              <Button type="submit" className="w-full gap-2" disabled={isSubmitting}><Send size={16} /> {isSubmitting ? "Submitting..." : "Submit Ticket"}</Button>
             </form>
           </CardContent>
         </Card>

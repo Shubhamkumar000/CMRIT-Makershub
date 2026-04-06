@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "@/hooks/use-toast";
 import { jsPDF } from "jspdf";
 import { bookingsAPI } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
 
 const branches = [
   "Computer Science & Engineering",
@@ -31,8 +30,8 @@ interface BookingFormProps {
 
 const BookingForm = ({ serviceName, icon: Icon, nominalFee, cmritFee }: BookingFormProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [isCmrit, setIsCmrit] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", usn: "", branch: "" });
 
   const fee = isCmrit ? cmritFee : nominalFee;
@@ -50,11 +49,15 @@ const BookingForm = ({ serviceName, icon: Icon, nominalFee, cmritFee }: BookingF
   };
 
   const generateInvoice = async () => {
+    if (isSubmitting) return;
+
     const error = getValidationError();
     if (error) { 
       toast({ title: "Invalid Details", description: error, variant: "destructive" }); 
       return; 
     }
+
+    setIsSubmitting(true);
 
     try {
       // First create booking in backend
@@ -144,6 +147,8 @@ const BookingForm = ({ serviceName, icon: Icon, nominalFee, cmritFee }: BookingF
         ? error.message
         : "Failed to create booking. Please try again.";
       toast({ title: "Error", description, variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -218,8 +223,8 @@ const BookingForm = ({ serviceName, icon: Icon, nominalFee, cmritFee }: BookingF
             )}
           </div>
 
-          <Button onClick={generateInvoice} size="lg" className="w-full text-lg py-6 rounded-xl font-semibold">
-            Book & Download Invoice
+          <Button onClick={generateInvoice} size="lg" className="w-full text-lg py-6 rounded-xl font-semibold" disabled={isSubmitting}>
+            {isSubmitting ? "Processing..." : "Book & Download Invoice"}
           </Button>
         </div>
       </div>

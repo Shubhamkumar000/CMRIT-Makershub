@@ -15,30 +15,38 @@ const StudentLogin = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!email || !password || (isRegister && !name)) {
       toast({ title: "Please fill all fields", variant: "destructive" });
       return;
     }
+
+    setIsSubmitting(true);
     
-    if (isRegister) {
-      const result = await register({ name, email, password });
-      if (!result.success) { 
-        toast({ title: result.error || "Registration failed", variant: "destructive" }); 
-        return; 
+    try {
+      if (isRegister) {
+        const result = await register({ name, email, password });
+        if (!result.success) { 
+          toast({ title: result.error || "Registration failed", variant: "destructive" }); 
+          return; 
+        }
+        toast({ title: "Account created! Please log in." });
+        setIsRegister(false);
+      } else {
+        const result = await login(email, password);
+        if (!result.success) { 
+          toast({ title: result.error || "Invalid credentials", variant: "destructive" }); 
+          return; 
+        }
+        toast({ title: `Welcome, ${result.user?.name}!` });
+        navigate("/student/dashboard");
       }
-      toast({ title: "Account created! Please log in." });
-      setIsRegister(false);
-    } else {
-      const result = await login(email, password);
-      if (!result.success) { 
-        toast({ title: result.error || "Invalid credentials", variant: "destructive" }); 
-        return; 
-      }
-      toast({ title: `Welcome, ${result.user?.name}!` });
-      navigate("/student/dashboard");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -58,8 +66,8 @@ const StudentLogin = () => {
               {isRegister && <Input placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} />}
               <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
               <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-              <Button type="submit" className="w-full gap-2">
-                {isRegister ? <><UserPlus size={16} /> Create Account</> : <><LogIn size={16} /> Login</>}
+              <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
+                {isSubmitting ? <>{isRegister ? <UserPlus size={16} /> : <LogIn size={16} />} Processing...</> : (isRegister ? <><UserPlus size={16} /> Create Account</> : <><LogIn size={16} /> Login</>)}
               </Button>
             </form>
             <p className="text-sm text-center mt-4 text-muted-foreground">

@@ -7,14 +7,12 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "cmrit@maker2024";
-
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const isAdminLoggedIn = localStorage.getItem("admin_logged_in") || sessionStorage.getItem("admin_logged_in");
@@ -24,9 +22,13 @@ const AdminLogin = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     const result = await login(username, password, true);
     if (!result.success) {
       toast({ title: result.error || "Login Failed", description: "Invalid credentials.", variant: "destructive" });
+      setIsSubmitting(false);
       return;
     }
     
@@ -61,8 +63,8 @@ const AdminLogin = () => {
             </div>
           </div>
 
-          <Button onClick={handleLogin} size="lg" className="w-full text-lg py-6 rounded-xl font-semibold">
-            Login
+          <Button onClick={handleLogin} size="lg" className="w-full text-lg py-6 rounded-xl font-semibold" disabled={isSubmitting}>
+            {isSubmitting ? "Logging in..." : "Login"}
           </Button>
         </div>
       </div>

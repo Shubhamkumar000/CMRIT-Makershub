@@ -29,11 +29,6 @@ const EventsSection = () => {
 
   useEffect(() => {
     fetchEvents();
-    const interval = setInterval(fetchEvents, 5000);
-
-    return () => {
-      clearInterval(interval);
-    };
   }, []);
 
   const prev = () => setIdx((i) => (i === 0 ? events.length - 1 : i - 1));

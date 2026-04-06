@@ -30,6 +30,7 @@ const Hardware = () => {
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isCmrit, setIsCmrit] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", usn: "", branch: "" });
 
   const fetchInventory = async () => {
@@ -54,8 +55,6 @@ const Hardware = () => {
 
   useEffect(() => {
     fetchInventory();
-    const interval = setInterval(fetchInventory, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleChange = (field: string, value: string) => setForm((prev) => ({ ...prev, [field]: value }));
@@ -79,11 +78,13 @@ const Hardware = () => {
   };
 
   const handleBooking = async () => {
+    if (isSubmitting) return;
     if (!selectedItem) return;
     const error = getValidationError();
     if (error) { toast({ title: "Invalid Details", description: error, variant: "destructive" }); return; }
 
     const fee = isCmrit ? selectedItem.cmritFee : selectedItem.fee;
+    setIsSubmitting(true);
 
     try {
       await inventoryAPI.book(selectedItem.id);
@@ -166,6 +167,8 @@ const Hardware = () => {
       console.error(err);
       const description = err instanceof Error ? err.message : "Failed to book equipment.";
       toast({ title: "Error", description, variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -286,7 +289,7 @@ const Hardware = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleBooking}>Book & Download Invoice</Button>
+            <Button onClick={handleBooking} disabled={isSubmitting}>{isSubmitting ? "Processing..." : "Book & Download Invoice"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -48,7 +48,7 @@ const apiLimiter = rateLimit({
   max: rateLimitMax,
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path.startsWith('/health') || req.path.startsWith('/auth'),
+  skip: (req) => req.method === 'OPTIONS' || req.path.startsWith('/health') || req.path.startsWith('/auth'),
   message: {
     message: 'Too many requests, please try again later.'
   }
@@ -59,6 +59,8 @@ const authLimiter = rateLimit({
   max: authRateLimitMax,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS',
+  skipSuccessfulRequests: true,
   message: {
     message: 'Too many login attempts, please try again later.'
   }
