@@ -283,10 +283,10 @@ const AdminDashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={handleClear} className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10">
+            <Button variant="outline" size="sm" onClick={handleClear} className="bg-transparent text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10 hover:text-primary-foreground">
               <Trash2 size={16} className="mr-1" /> Clear Bookings
             </Button>
-            <Button variant="outline" size="sm" onClick={handleLogout} className="text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10">
+            <Button variant="outline" size="sm" onClick={handleLogout} className="bg-transparent text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10 hover:text-primary-foreground">
               <LogOut size={16} className="mr-1" /> Logout
             </Button>
           </div>
