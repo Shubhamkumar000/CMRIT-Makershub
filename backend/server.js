@@ -19,13 +19,16 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
 const PORT = process.env.PORT || 5000;
 const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = isProduction
+  ? (process.env.CORS_ORIGINS || '')
+      .split(',')
+      .map((origin) => origin.trim())
+      .filter(Boolean)
+  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
-    }
-    const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+    if (!isProduction) return callback(null, true);
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }

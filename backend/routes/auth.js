@@ -144,7 +144,7 @@ router.get('/profile', authenticateToken, async (req, res) => {
   });
 });
 
-// Admin login with hardcoded credentials (for compatibility with frontend)
+// Admin login (env-configured single admin)
 router.post('/admin-login', [
   body('username').notEmpty().withMessage('Username is required'),
   body('password').notEmpty().withMessage('Password is required')
@@ -152,12 +152,17 @@ router.post('/admin-login', [
   try {
     const { username, password } = req.body;
     const inputUsername = username?.trim();
+    const normalizedInput = inputUsername?.toLowerCase();
 
-    const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-    const adminEmail = process.env.ADMIN_EMAIL || 'admin@cmrit.ac.in';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'cmrit@maker2024';
+    const adminUsername = process.env.ADMIN_USERNAME?.trim();
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const adminPassword = process.env.ADMIN_PASSWORD;
 
-    const usernameMatches = inputUsername === adminUsername || inputUsername === adminEmail;
+    if (!adminEmail || !adminPassword) {
+      return res.status(500).json({ message: 'Admin credentials are not configured on server' });
+    }
+
+    const usernameMatches = normalizedInput === adminEmail || (!!adminUsername && inputUsername === adminUsername);
 
     if (usernameMatches && password === adminPassword) {
       // Find or create admin user
@@ -166,11 +171,14 @@ router.post('/admin-login', [
       if (!adminUser) {
         const hashedPassword = await bcrypt.hash(adminPassword, 10);
         adminUser = new User({
-          name: 'Administrator',
+          name: adminUsername || 'Administrator',
           email: adminEmail,
           password: hashedPassword,
           role: 'admin'
         });
+        await adminUser.save();
+      } else if (adminUser.role !== 'admin') {
+        adminUser.role = 'admin';
         await adminUser.save();
       }
 
