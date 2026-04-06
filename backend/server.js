@@ -19,6 +19,9 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
 const PORT = process.env.PORT || 5000;
 const isProduction = process.env.NODE_ENV === 'production';
+const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
+const rateLimitMax = Number(process.env.RATE_LIMIT_MAX || 300);
+const authRateLimitMax = Number(process.env.AUTH_RATE_LIMIT_MAX || 30);
 const allowedOrigins = isProduction
   ? (process.env.CORS_ORIGINS || '')
       .split(',')
@@ -40,22 +43,35 @@ const corsOptions = {
 };
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+const apiLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: rateLimitMax,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => req.path.startsWith('/health') || req.path.startsWith('/auth'),
   message: {
     message: 'Too many requests, please try again later.'
   }
 });
 
+const authLimiter = rateLimit({
+  windowMs: rateLimitWindowMs,
+  max: authRateLimitMax,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    message: 'Too many login attempts, please try again later.'
+  }
+});
+
 // Middleware
+app.set('trust proxy', 1);
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(helmet());
 if (isProduction) {
-  app.use('/api', limiter);
+  app.use('/api/auth', authLimiter);
+  app.use('/api', apiLimiter);
 }
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
