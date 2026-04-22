@@ -21,7 +21,7 @@ import {
 interface Booking {
   id: string;
   name: string;
-  phone: string;z
+  phone: string;
   email: string;
   isCmrit: boolean;
   usn?: string;

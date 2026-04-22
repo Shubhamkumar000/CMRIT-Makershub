@@ -22,8 +22,8 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-card shadow-sm">
-      <div className="hidden md:flex items-center justify-center gap-6 bg-yellow-300 px-4 py-3 text-center">
-        <p className="text-sm font-medium text-black lg:text-[22px]">
+      <div className="hidden items-center justify-center gap-6 bg-yellow-300 px-4 py-3 text-center md:flex">
+        <p className="text-sm font-medium text-black lg:text-base">
           Invitation to Participate in "Innovate to Elevate" - 4-Day Startup Boot Camp (22nd-30th April 2026)
         </p>
         <button className="shrink-0 rounded-md border border-black bg-yellow-300 px-5 py-2 text-sm font-semibold text-black transition-colors hover:bg-black hover:text-yellow-300">
@@ -45,16 +45,19 @@ const Navbar = () => {
                 {item.hasDropdown ? <ChevronDown size={16} /> : null}
               </a>
             ))}
+
             <div className="relative shrink-0">
               <button
                 onClick={() => setLoginMenuOpen((prev) => !prev)}
                 className="flex items-center gap-1.5 whitespace-nowrap text-[14px] font-semibold text-foreground transition-colors hover:text-primary xl:text-[15px]"
                 aria-label="Login menu"
               >
-                <LogIn size={16} /> Login <ChevronDown size={16} className={`transition-transform ${loginMenuOpen ? "rotate-180" : ""}`} />
+                <LogIn size={16} />
+                Login
+                <ChevronDown size={16} className={`transition-transform ${loginMenuOpen ? "rotate-180" : ""}`} />
               </button>
               {loginMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-40 rounded-md border border-border bg-card p-1 shadow-lg">
+                <div className="absolute right-0 top-full mt-2 w-44 rounded-md border border-border bg-card p-1 shadow-lg">
                   <button
                     onClick={() => {
                       setLoginMenuOpen(false);
@@ -76,6 +79,7 @@ const Navbar = () => {
                 </div>
               )}
             </div>
+
             <button aria-label="Search" className="shrink-0 text-foreground transition-colors hover:text-primary">
               <Search size={22} />
             </button>
@@ -102,10 +106,11 @@ const Navbar = () => {
 
           {links.map((item) => (
             <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="flex items-center justify-between py-3 text-sm font-medium text-foreground hover:text-primary">
-              {item.label}
+              <span>{item.label}</span>
               {item.hasDropdown ? <ChevronDown size={16} /> : null}
             </a>
           ))}
+
           <button
             onClick={() => setMobileLoginOpen((prev) => !prev)}
             className="flex w-full items-center justify-between py-3 text-sm font-medium text-foreground hover:text-primary"
@@ -115,6 +120,7 @@ const Navbar = () => {
             </span>
             <ChevronDown size={16} className={`transition-transform ${mobileLoginOpen ? "rotate-180" : ""}`} />
           </button>
+
           {mobileLoginOpen && (
             <div className="pl-6">
               <button
@@ -139,6 +145,7 @@ const Navbar = () => {
               </button>
             </div>
           )}
+
           <button className="flex w-full items-center gap-1.5 py-3 text-sm font-medium text-foreground hover:text-primary" aria-label="Search">
             <Search size={16} /> Search
           </button>
