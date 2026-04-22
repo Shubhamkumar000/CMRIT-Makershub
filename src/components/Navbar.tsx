@@ -7,6 +7,8 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [loginMenuOpen, setLoginMenuOpen] = useState(false);
   const [mobileLoginOpen, setMobileLoginOpen] = useState(false);
+  const [startupMenuOpen, setStartupMenuOpen] = useState(false);
+  const [mobileStartupOpen, setMobileStartupOpen] = useState(false);
   const navigate = useNavigate();
   const links = [
     { label: "Home", href: "#home" },
@@ -14,11 +16,35 @@ const Navbar = () => {
     { label: "Our Services", href: "#services" },
     { label: "Our Programs", href: "#programs" },
     { label: "MSME - HI", href: "#msme-hi" },
-    { label: "Our Startups", href: "#startups", hasDropdown: true },
     { label: "Resources", href: "#resources" },
     { label: "Events", href: "#events", hasDropdown: true },
     { label: "Contact Us", href: "#contact" },
   ];
+
+  const goToSection = (href: string) => {
+    const targetId = href.replace("#", "");
+
+    setOpen(false);
+    setMobileLoginOpen(false);
+    setMobileStartupOpen(false);
+    setLoginMenuOpen(false);
+    setStartupMenuOpen(false);
+
+    if (window.location.pathname !== "/") {
+      navigate(`/${href}`);
+      return;
+    }
+
+    if (!targetId) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const section = document.getElementById(targetId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-card shadow-sm">
@@ -32,19 +58,60 @@ const Navbar = () => {
       </div>
 
       <div className="mx-auto flex h-[74px] w-full max-w-[1480px] items-center px-4 sm:px-6 lg:px-8 xl:px-10">
-        <div className="flex shrink-0 items-center gap-3 pr-8">
+        <button
+          onClick={() => goToSection("#home")}
+          className="flex shrink-0 items-center gap-3 pr-8 text-left"
+          aria-label="Go to home"
+        >
           <img src={cmritLogo} alt="CMRIT Logo" className="h-9 w-9 object-contain" />
           <span className="whitespace-nowrap text-sm font-medium tracking-wide text-foreground sm:text-xl">CMRIT INCUBATION CENTER</span>
-        </div>
+        </button>
 
         <div className="hidden min-w-0 flex-1 items-center lg:flex">
           <div className="flex w-full items-center justify-between gap-5 xl:gap-7">
             {links.map((item) => (
-              <a key={item.label} href={item.href} className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[14px] font-semibold text-foreground transition-colors hover:text-primary xl:text-[15px]">
+              <button
+                key={item.label}
+                onClick={() => goToSection(item.href)}
+                className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[14px] font-semibold text-foreground transition-colors hover:text-primary xl:text-[15px]"
+              >
                 {item.label}
                 {item.hasDropdown ? <ChevronDown size={16} /> : null}
-              </a>
+              </button>
             ))}
+
+            <div className="relative shrink-0">
+              <button
+                onClick={() => setStartupMenuOpen((prev) => !prev)}
+                className="flex items-center gap-1 whitespace-nowrap text-[14px] font-semibold text-foreground transition-colors hover:text-primary xl:text-[15px]"
+                aria-label="Startups menu"
+              >
+                Our Startups
+                <ChevronDown size={16} className={`transition-transform ${startupMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+              {startupMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 rounded-md border border-border bg-card p-1 shadow-lg">
+                  <button
+                    onClick={() => {
+                      setStartupMenuOpen(false);
+                      navigate("/startups/student");
+                    }}
+                    className="w-full rounded px-3 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                  >
+                    Student Startup
+                  </button>
+                  <button
+                    onClick={() => {
+                      setStartupMenuOpen(false);
+                      navigate("/startups/faculty");
+                    }}
+                    className="w-full rounded px-3 py-2 text-left text-sm font-medium text-foreground transition-colors hover:bg-accent"
+                  >
+                    Faculty Startup
+                  </button>
+                </div>
+              )}
+            </div>
 
             <div className="relative shrink-0">
               <button
@@ -105,11 +172,48 @@ const Navbar = () => {
           </div>
 
           {links.map((item) => (
-            <a key={item.label} href={item.href} onClick={() => setOpen(false)} className="flex items-center justify-between py-3 text-sm font-medium text-foreground hover:text-primary">
+            <button
+              key={item.label}
+              onClick={() => goToSection(item.href)}
+              className="flex w-full items-center justify-between py-3 text-sm font-medium text-foreground hover:text-primary"
+            >
               <span>{item.label}</span>
               {item.hasDropdown ? <ChevronDown size={16} /> : null}
-            </a>
+            </button>
           ))}
+
+          <button
+            onClick={() => setMobileStartupOpen((prev) => !prev)}
+            className="flex w-full items-center justify-between py-3 text-sm font-medium text-foreground hover:text-primary"
+          >
+            <span>Our Startups</span>
+            <ChevronDown size={16} className={`transition-transform ${mobileStartupOpen ? "rotate-180" : ""}`} />
+          </button>
+
+          {mobileStartupOpen && (
+            <div className="pl-6">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setMobileStartupOpen(false);
+                  navigate("/startups/student");
+                }}
+                className="block w-full py-2 text-left text-sm font-medium text-foreground hover:text-primary"
+              >
+                Student Startup
+              </button>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setMobileStartupOpen(false);
+                  navigate("/startups/faculty");
+                }}
+                className="block w-full py-2 text-left text-sm font-medium text-foreground hover:text-primary"
+              >
+                Faculty Startup
+              </button>
+            </div>
+          )}
 
           <button
             onClick={() => setMobileLoginOpen((prev) => !prev)}

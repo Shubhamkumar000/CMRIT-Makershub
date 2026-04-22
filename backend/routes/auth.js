@@ -154,15 +154,16 @@ router.post('/admin-login', [
     const inputUsername = username?.trim();
     const normalizedInput = inputUsername?.toLowerCase();
 
-    const adminUsername = process.env.ADMIN_USERNAME?.trim();
-    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    // Defaults documented in SETUP.md and backend/README.md
+    const fallbackUsername = 'admin';
+    const fallbackPassword = 'cmrit@maker2024';
+    const fallbackEmail = 'admin@cmrit.local';
 
-    if (!adminEmail || !adminPassword) {
-      return res.status(500).json({ message: 'Admin credentials are not configured on server' });
-    }
+    const adminUsername = process.env.ADMIN_USERNAME?.trim() || fallbackUsername;
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase() || fallbackEmail;
+    const adminPassword = process.env.ADMIN_PASSWORD || fallbackPassword;
 
-    const usernameMatches = normalizedInput === adminEmail || (!!adminUsername && inputUsername === adminUsername);
+    const usernameMatches = normalizedInput === adminEmail || (!!adminUsername && normalizedInput === adminUsername.toLowerCase());
 
     if (usernameMatches && password === adminPassword) {
       // Find or create admin user

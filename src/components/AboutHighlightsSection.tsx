@@ -1,4 +1,4 @@
-import inaugurationImage from "@/assets/slide-2.jpeg";
+import inaugurationImage from "@/assets/vicepresident.jpg";
 
 const stats = [
   { value: "56+", label: "STARTUPS INCUBATED" },
@@ -12,7 +12,7 @@ const AboutHighlightsSection = () => {
     <section id="about" className="relative py-20">
       <div className="w-full px-3 sm:px-5 lg:px-8">
         <div className="w-full overflow-hidden rounded-2xl border border-border/40 bg-card/85 p-4 backdrop-blur-md md:p-8 lg:rounded-3xl lg:p-10">
-          <div className="grid items-start gap-6 lg:grid-cols-[2.2fr_1fr]">
+          <div className="grid items-stretch gap-6 lg:grid-cols-[2.2fr_1fr]">
             <div className="space-y-4 bg-white/75 p-4 text-left text-foreground md:p-6 lg:p-8">
               <p className="text-base leading-relaxed md:text-[19px]">
                 The CMRIT Incubation center was inaugurated on 21st January 2026 by <strong>Hon'ble Vice-President of India, Shri C. P Radhakrishnan</strong>, and <strong>Hon'ble Governor of Karnataka, Shri Thaawarchand Gehlot</strong>, in the distinguished presence of <strong>Dr. K. C. Ramamurthy, IPS (Retd.), Chairman, CMR Group of Institutions; Dr. Sabitha Ramamurthy, President, CMR Jnanadhara Trust and Chancellor, CMR University</strong>; along with other eminent dignitaries, trustees, and institutional leaders.
@@ -25,8 +25,8 @@ const AboutHighlightsSection = () => {
               </p>
             </div>
 
-            <div className="overflow-hidden border border-border/40 bg-white/40">
-              <img src={inaugurationImage} alt="CMRIT Incubation Center inauguration" className="h-full min-h-[360px] w-full object-cover" />
+            <div className="h-full overflow-hidden border border-border/40 bg-white/40">
+              <img src={inaugurationImage} alt="CMRIT Incubation Center inauguration" className="h-full w-full object-cover" />
             </div>
           </div>
 

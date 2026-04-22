@@ -12,6 +12,39 @@ const galleryImages = [
   { src: cmrit4, alt: "CMRIT innovation lab setup" },
 ];
 
+type ImageCardProps = {
+  src: string;
+  alt: string;
+  index: number;
+  onClick: (index: number) => void;
+};
+
+const ImageCard = ({ src, alt, index, onClick }: ImageCardProps) => {
+  return (
+    <div className="relative overflow-visible">
+      <button
+        onClick={() => onClick(index)}
+        className="group relative z-0 h-[260px] w-full overflow-visible rounded-xl border border-border/30 bg-card transition-all duration-500 ease-in-out hover:z-50 hover:-translate-y-[5px] hover:shadow-2xl hover:shadow-black/35 sm:h-[320px] lg:h-[520px]"
+        aria-label={`Open image ${index + 1}`}
+      >
+        <div className="relative h-full w-full overflow-hidden rounded-xl">
+          <img
+            src={src}
+            alt={alt}
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-100 transition-all duration-500 ease-in-out group-hover:scale-95 group-hover:opacity-0"
+          />
+          <img
+            src={src}
+            alt={alt}
+            className="pointer-events-none absolute inset-0 h-full w-full scale-90 object-contain p-2 opacity-0 transition-all duration-500 ease-in-out group-hover:scale-100 group-hover:opacity-100"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-black/0 transition-all duration-500 ease-in-out group-hover:bg-black/12" />
+        </div>
+      </button>
+    </div>
+  );
+};
+
 const SchoolsSection = () => {
   const [activeImage, setActiveImage] = useState<number | null>(null);
 
@@ -21,19 +54,13 @@ const SchoolsSection = () => {
         <div className="relative overflow-visible rounded-3xl border border-border/50 bg-card/75 p-4 shadow-2xl backdrop-blur-sm md:p-6">
           <div className="grid grid-cols-1 gap-3 rounded-2xl overflow-visible sm:grid-cols-2 lg:grid-cols-4">
             {galleryImages.map((image, index) => (
-              <button
+              <ImageCard
                 key={image.src}
-                onClick={() => setActiveImage(index)}
-                className="group relative z-0 h-[260px] w-full overflow-hidden rounded-xl border border-border/30 transition-all duration-400 hover:z-40 hover:-translate-y-4 hover:translate-x-6 hover:shadow-2xl hover:shadow-black/50 sm:h-[320px] lg:h-[520px]"
-                aria-label={`Open image ${index + 1}`}
-              >
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:translate-x-8"
-                />
-                <div className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/12" />
-              </button>
+                src={image.src}
+                alt={image.alt}
+                index={index}
+                onClick={setActiveImage}
+              />
             ))}
           </div>
         </div>

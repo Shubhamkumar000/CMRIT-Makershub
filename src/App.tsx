@@ -14,6 +14,10 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 import StudentLogin from "./pages/StudentLogin.tsx";
 import StudentDashboard from "./pages/StudentDashboard.tsx";
 import ReportIssue from "./pages/ReportIssue.tsx";
+import StartupApplication from "./pages/StartupApplication.tsx";
+import IdeaApplication from "./pages/IdeaApplication.tsx";
+import StudentStartups from "./pages/StudentStartups.tsx";
+import FacultyStartups from "./pages/FacultyStartups.tsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +38,10 @@ const App = () => (
           <Route path="/student/login" element={<StudentLogin />} />
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/report" element={<ReportIssue />} />
+          <Route path="/apply/startup" element={<StartupApplication />} />
+          <Route path="/apply/idea" element={<IdeaApplication />} />
+          <Route path="/startups/student" element={<StudentStartups />} />
+          <Route path="/startups/faculty" element={<FacultyStartups />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
